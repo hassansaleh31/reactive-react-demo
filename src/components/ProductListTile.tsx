@@ -4,6 +4,7 @@ import { Product } from "../data/product";
 import { map } from "rxjs";
 import { useCartContext } from "../context/CartContext";
 import { usePipedObserbaleState } from "../hooks/usePipedObservableState";
+import { CurrencyPrice } from "./CurrencyPrice";
 
 interface ProductListTileProps {
   product: Product;
@@ -20,7 +21,9 @@ export function ProductListTile({
         <span>Category: {product.category}</span>
       </div>
       <div className="product-suffix">
-        <p>${product.price}</p>
+        <p>
+          <CurrencyPrice price={product.price} />
+        </p>
         <Actions product={product} />
       </div>
     </div>

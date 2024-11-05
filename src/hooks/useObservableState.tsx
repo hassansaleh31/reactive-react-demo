@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
-import { Observable } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
+
+export function useObservableState<TData>(
+  source$: BehaviorSubject<TData>
+): TData;
 
 export function useObservableState<TData>(
   source$: Observable<TData>
-): TData | undefined {
-  const [value, setValue] = useState<TData>();
+): TData | undefined;
+
+export function useObservableState<TData>(
+  source$: Observable<TData> | BehaviorSubject<TData>
+): TData {
+  const [value, setValue] = useState<TData>(
+    source$ instanceof BehaviorSubject ? source$.value : undefined
+  );
 
   useEffect(() => {
     const subscription = source$.subscribe((newValue) => {

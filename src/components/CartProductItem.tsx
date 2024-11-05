@@ -2,6 +2,7 @@ import React from "react";
 import { useCartContext } from "../context/CartContext";
 import { map } from "rxjs";
 import { usePipedObserbaleState } from "../hooks/usePipedObservableState";
+import { CurrencyPrice } from "./CurrencyPrice";
 
 export interface CartProductItemProps {
   id: number;
@@ -21,7 +22,9 @@ export const CartProductItem = React.memo(function CartProductItem({
       style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
     >
       <span style={{ flexGrow: "1" }}>{name}</span>
-      <span>${price}</span>
+      <span>
+        <CurrencyPrice price={price} />
+      </span>
       <span style={{ marginInline: "5px" }}> {"x"} </span>
       <Quantity id={id} />
       <button

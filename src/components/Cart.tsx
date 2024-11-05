@@ -3,6 +3,7 @@ import { map } from "rxjs";
 import { useCartContext } from "../context/CartContext";
 import { CartProductItem } from "./CartProductItem";
 import { usePipedObserbaleState } from "../hooks/usePipedObservableState";
+import { CurrencyPrice } from "./CurrencyPrice";
 
 export function Cart(): React.ReactElement {
   return (
@@ -47,13 +48,11 @@ function CartTotal(): React.ReactElement {
     () =>
       cartProducts$.pipe(
         map((cartProducts) =>
-          cartProducts
-            .reduce(
-              (acc, cartProduct) =>
-                acc + cartProduct.quantity * cartProduct.product.price,
-              0
-            )
-            .toFixed(2)
+          cartProducts.reduce(
+            (acc, cartProduct) =>
+              acc + cartProduct.quantity * cartProduct.product.price,
+            0
+          )
         )
       ),
     [cartProducts$]
@@ -62,7 +61,9 @@ function CartTotal(): React.ReactElement {
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
       <span style={{ flexGrow: "1" }}>Total</span>
-      <span>${total}</span>
+      <span>
+        <CurrencyPrice price={total ?? 0} />
+      </span>
     </div>
   );
 }
