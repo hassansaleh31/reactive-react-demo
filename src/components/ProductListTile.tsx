@@ -1,19 +1,16 @@
-import React from "react";
+import React, { useMemo } from "react";
 import "./ProductListTile.css";
 import { Product } from "../data/product";
+import { map } from "rxjs";
+import { useObservableState } from "../hooks/useObservableState";
+import { useCartContext } from "../context/CartContext";
 
 interface ProductListTileProps {
   product: Product;
-  quantity: number;
-  onAdd: () => void;
-  onRemove: () => void;
 }
 
 export function ProductListTile({
   product,
-  quantity,
-  onAdd,
-  onRemove,
 }: ProductListTileProps): React.ReactElement {
   return (
     <div className="product-wrapper">
@@ -24,14 +21,39 @@ export function ProductListTile({
       </div>
       <div className="product-suffix">
         <p>${product.price}</p>
-        <div>
-          <button disabled={quantity === 0} onClick={onRemove}>
-            -
-          </button>
-          {` ${quantity} `}
-          <button onClick={onAdd}>+</button>
-        </div>
+        <Actions product={product} />
       </div>
+    </div>
+  );
+}
+
+function Actions({ product }: { product: Product }): React.ReactElement {
+  const { cartProducts$, addProduct, removeProduct } = useCartContext();
+
+  const quantity$ = useMemo(
+    () =>
+      cartProducts$.pipe(
+        map(
+          (cartProducts) =>
+            cartProducts.find(
+              (cartProduct) => cartProduct.product.id === product.id
+            )?.quantity ?? 0
+        )
+      ),
+    [cartProducts$, product.id]
+  );
+
+  const quantity = useObservableState(quantity$) ?? 0;
+  return (
+    <div>
+      <button
+        disabled={quantity === 0}
+        onClick={() => removeProduct(product.id)}
+      >
+        -
+      </button>
+      {` ${quantity} `}
+      <button onClick={() => addProduct(product)}>+</button>
     </div>
   );
 }
