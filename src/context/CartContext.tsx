@@ -7,6 +7,7 @@ export interface CartState {
   cartProducts$: BehaviorSubject<CartProduct[]>;
   addProduct: (product: Product) => void;
   removeProduct: (productId: number) => void;
+  removeAll: (productId: number) => void;
 }
 
 export function useCartContext(): CartState {

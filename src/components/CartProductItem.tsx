@@ -1,7 +1,7 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useCartContext } from "../context/CartContext";
 import { map } from "rxjs";
-import { useObservableState } from "../hooks/useObservableState";
+import { usePipedObserbaleState } from "../hooks/usePipedObservableState";
 
 export interface CartProductItemProps {
   id: number;
@@ -14,9 +14,30 @@ export const CartProductItem = React.memo(function CartProductItem({
   name,
   price,
 }: CartProductItemProps): React.ReactElement {
+  const { removeAll } = useCartContext();
+
+  return (
+    <div
+      style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+    >
+      <span style={{ flexGrow: "1" }}>{name}</span>
+      <span>${price}</span>
+      <span style={{ marginInline: "5px" }}> {"x"} </span>
+      <Quantity id={id} />
+      <button
+        style={{ marginInlineStart: "5px", color: "red" }}
+        onClick={() => removeAll(id)}
+      >
+        x
+      </button>
+    </div>
+  );
+});
+
+function Quantity({ id }: { id: number }): React.ReactElement {
   const { cartProducts$ } = useCartContext();
 
-  const quantity$ = useMemo(
+  const quantity = usePipedObserbaleState(
     () =>
       cartProducts$.pipe(
         map(
@@ -27,14 +48,6 @@ export const CartProductItem = React.memo(function CartProductItem({
       ),
     [cartProducts$, id]
   );
-  const quantity = useObservableState(quantity$);
 
-  return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      <span style={{ flexGrow: "1" }}>{name}</span>
-      <span>
-        ${price} x {quantity}
-      </span>
-    </div>
-  );
-});
+  return <span>{quantity}</span>;
+}

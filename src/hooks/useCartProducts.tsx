@@ -67,9 +67,18 @@ export function useCartProducts(): CartState {
     [cartProducts$, setCartProducts]
   );
 
+  const onRemoveAll = useCallback(
+    (productId: number) => {
+      const cartProducts = cartProducts$.value;
+      setCartProducts(cartProducts.filter((e) => e.product.id != productId));
+    },
+    [cartProducts$, setCartProducts]
+  );
+
   return {
     cartProducts$,
     addProduct: onAddProduct,
     removeProduct: onRemoveProduct,
+    removeAll: onRemoveAll,
   };
 }

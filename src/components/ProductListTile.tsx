@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
+import React from "react";
 import "./ProductListTile.css";
 import { Product } from "../data/product";
 import { map } from "rxjs";
-import { useObservableState } from "../hooks/useObservableState";
 import { useCartContext } from "../context/CartContext";
+import { usePipedObserbaleState } from "../hooks/usePipedObservableState";
 
 interface ProductListTileProps {
   product: Product;
@@ -30,20 +30,20 @@ export function ProductListTile({
 function Actions({ product }: { product: Product }): React.ReactElement {
   const { cartProducts$, addProduct, removeProduct } = useCartContext();
 
-  const quantity$ = useMemo(
-    () =>
-      cartProducts$.pipe(
-        map(
-          (cartProducts) =>
-            cartProducts.find(
-              (cartProduct) => cartProduct.product.id === product.id
-            )?.quantity ?? 0
-        )
-      ),
-    [cartProducts$, product.id]
-  );
+  const quantity =
+    usePipedObserbaleState(
+      () =>
+        cartProducts$.pipe(
+          map(
+            (cartProducts) =>
+              cartProducts.find(
+                (cartProduct) => cartProduct.product.id === product.id
+              )?.quantity
+          )
+        ),
+      [cartProducts$, product.id]
+    ) ?? 0;
 
-  const quantity = useObservableState(quantity$) ?? 0;
   return (
     <div>
       <button

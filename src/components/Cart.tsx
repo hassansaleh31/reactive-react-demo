@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { map } from "rxjs";
-import { useObservableState } from "../hooks/useObservableState";
 import { useCartContext } from "../context/CartContext";
 import { CartProductItem } from "./CartProductItem";
+import { usePipedObserbaleState } from "../hooks/usePipedObservableState";
 
 export function Cart(): React.ReactElement {
   return (
@@ -16,17 +16,16 @@ export function Cart(): React.ReactElement {
 function CartContent(): React.ReactElement {
   const { cartProducts$ } = useCartContext();
 
-  const productsInCart$ = useMemo(
-    () =>
-      cartProducts$.pipe(
-        map((cartProducts) =>
-          cartProducts.map((cartProduct) => cartProduct.product)
-        )
-      ),
-    [cartProducts$]
-  );
-
-  const products = useObservableState(productsInCart$) ?? [];
+  const products =
+    usePipedObserbaleState(
+      () =>
+        cartProducts$.pipe(
+          map((cartProducts) =>
+            cartProducts.map((cartProduct) => cartProduct.product)
+          )
+        ),
+      [cartProducts$]
+    ) ?? [];
 
   if (products.length === 0) return <span>Your cart is empty</span>;
 
@@ -44,7 +43,7 @@ function CartContent(): React.ReactElement {
 function CartTotal(): React.ReactElement {
   const { cartProducts$ } = useCartContext();
 
-  const total$ = useMemo(
+  const total = usePipedObserbaleState(
     () =>
       cartProducts$.pipe(
         map((cartProducts) =>
@@ -59,8 +58,6 @@ function CartTotal(): React.ReactElement {
       ),
     [cartProducts$]
   );
-
-  const total = useObservableState(total$);
 
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
