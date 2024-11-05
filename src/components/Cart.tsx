@@ -21,7 +21,10 @@ function CartContent({ products }: CartProps): React.ReactElement {
     <div style={{ display: "flex", flexDirection: "column" }}>
       {products.map((e) => {
         return (
-          <div style={{ display: "flex", flexDirection: "row" }}>
+          <div
+            key={e.product.id}
+            style={{ display: "flex", flexDirection: "row" }}
+          >
             <span style={{ flexGrow: "1" }}>{e.product.name}</span>
             <span>
               ${e.product.price} x {e.quantity}
