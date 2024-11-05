@@ -1,8 +1,6 @@
 import React from "react";
-import { map } from "rxjs";
 import { useCartContext } from "../context/CartContext";
 import { CartProductItem } from "./CartProductItem";
-import { usePipedObserbaleState } from "../hooks/usePipedObservableState";
 import { CurrencyPrice } from "./CurrencyPrice";
 
 export function Cart(): React.ReactElement {
@@ -15,18 +13,9 @@ export function Cart(): React.ReactElement {
 }
 
 function CartContent(): React.ReactElement {
-  const { cartProducts$ } = useCartContext();
+  const { cartProducts } = useCartContext();
 
-  const products =
-    usePipedObserbaleState(
-      () =>
-        cartProducts$.pipe(
-          map((cartProducts) =>
-            cartProducts.map((cartProduct) => cartProduct.product)
-          )
-        ),
-      [cartProducts$]
-    ) ?? [];
+  const products = cartProducts.map((cartProduct) => cartProduct.product);
 
   if (products.length === 0) return <span>Your cart is empty</span>;
 
@@ -42,20 +31,12 @@ function CartContent(): React.ReactElement {
 }
 
 function CartTotal(): React.ReactElement {
-  const { cartProducts$ } = useCartContext();
+  const { cartProducts } = useCartContext();
 
-  const total = usePipedObserbaleState(
-    () =>
-      cartProducts$.pipe(
-        map((cartProducts) =>
-          cartProducts.reduce(
-            (acc, cartProduct) =>
-              acc + cartProduct.quantity * cartProduct.product.price,
-            0
-          )
-        )
-      ),
-    [cartProducts$]
+  const total = cartProducts.reduce(
+    (acc, cartProduct) =>
+      acc + cartProduct.quantity * cartProduct.product.price,
+    0
   );
 
   return (

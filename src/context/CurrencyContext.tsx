@@ -1,9 +1,8 @@
-import { BehaviorSubject } from "rxjs";
 import React from "react";
 import { Currency } from "../data/currency";
 
 export interface CurrencyState {
-  currency$: BehaviorSubject<Currency>;
+  currency: Currency;
   updateCurrency: (currency: Currency) => void;
 }
 

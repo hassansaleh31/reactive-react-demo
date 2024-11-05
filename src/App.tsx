@@ -4,21 +4,21 @@ import { ProductListTile } from "./components/ProductListTile";
 import { useProductList } from "./hooks/useProductList";
 import { useCartProducts } from "./hooks/useCartProducts";
 import { CartContext } from "./context/CartContext";
-import { useBehaviourSubject } from "./hooks/useBehaviourSubject";
 import { Currency } from "./data/currency";
 import { CurrencyContext } from "./context/CurrencyContext";
 import { Header } from "./components/Header";
+import { useState } from "react";
 
 function App() {
   const { products, loading } = useProductList();
   const cartState = useCartProducts();
-  const [currency$, updateCurrency] = useBehaviourSubject<Currency>({
+  const [currency, updateCurrency] = useState<Currency>({
     symbol: "$",
     rate: 1,
   });
 
   return (
-    <CurrencyContext.Provider value={{ currency$, updateCurrency }}>
+    <CurrencyContext.Provider value={{ currency, updateCurrency }}>
       <CartContext.Provider value={cartState}>
         <Header />
         {

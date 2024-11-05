@@ -1,10 +1,9 @@
-import { BehaviorSubject } from "rxjs";
 import { CartProduct } from "../data/cartProduct";
 import { Product } from "../data/product";
 import React from "react";
 
 export interface CartState {
-  cartProducts$: BehaviorSubject<CartProduct[]>;
+  cartProducts: CartProduct[];
   addProduct: (product: Product) => void;
   removeProduct: (productId: number) => void;
   removeAll: (productId: number) => void;

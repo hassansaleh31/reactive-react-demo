@@ -1,7 +1,6 @@
 import React from "react";
 import { useCurrencyContext } from "../context/CurrencyContext";
 import { availableCurrencies } from "../data/currency";
-import { useObservableState } from "../hooks/useObservableState";
 
 export function Header(): React.ReactElement {
   return (
@@ -16,9 +15,7 @@ export function Header(): React.ReactElement {
 }
 
 function CurrencyPicker(): React.ReactElement {
-  const { currency$, updateCurrency } = useCurrencyContext();
-
-  const currency = useObservableState(currency$);
+  const { currency, updateCurrency } = useCurrencyContext();
 
   return (
     <select

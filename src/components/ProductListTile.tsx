@@ -1,9 +1,7 @@
 import React from "react";
 import "./ProductListTile.css";
 import { Product } from "../data/product";
-import { map } from "rxjs";
 import { useCartContext } from "../context/CartContext";
-import { usePipedObserbaleState } from "../hooks/usePipedObservableState";
 import { CurrencyPrice } from "./CurrencyPrice";
 
 interface ProductListTileProps {
@@ -31,21 +29,11 @@ export function ProductListTile({
 }
 
 function Actions({ product }: { product: Product }): React.ReactElement {
-  const { cartProducts$, addProduct, removeProduct } = useCartContext();
+  const { cartProducts, addProduct, removeProduct } = useCartContext();
 
   const quantity =
-    usePipedObserbaleState(
-      () =>
-        cartProducts$.pipe(
-          map(
-            (cartProducts) =>
-              cartProducts.find(
-                (cartProduct) => cartProduct.product.id === product.id
-              )?.quantity
-          )
-        ),
-      [cartProducts$, product.id]
-    ) ?? 0;
+    cartProducts.find((cartProduct) => cartProduct.product.id === product.id)
+      ?.quantity ?? 0;
 
   return (
     <div>

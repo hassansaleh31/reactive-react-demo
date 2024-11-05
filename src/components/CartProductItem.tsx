@@ -1,7 +1,5 @@
 import React from "react";
 import { useCartContext } from "../context/CartContext";
-import { map } from "rxjs";
-import { usePipedObserbaleState } from "../hooks/usePipedObservableState";
 import { CurrencyPrice } from "./CurrencyPrice";
 
 export interface CartProductItemProps {
@@ -38,19 +36,11 @@ export const CartProductItem = React.memo(function CartProductItem({
 });
 
 function Quantity({ id }: { id: number }): React.ReactElement {
-  const { cartProducts$ } = useCartContext();
+  const { cartProducts } = useCartContext();
 
-  const quantity = usePipedObserbaleState(
-    () =>
-      cartProducts$.pipe(
-        map(
-          (cartProducts) =>
-            cartProducts.find((cartProduct) => cartProduct.product.id === id)
-              ?.quantity ?? 0
-        )
-      ),
-    [cartProducts$, id]
-  );
+  const quantity =
+    cartProducts.find((cartProduct) => cartProduct.product.id === id)
+      ?.quantity ?? 0;
 
   return <span>{quantity}</span>;
 }
