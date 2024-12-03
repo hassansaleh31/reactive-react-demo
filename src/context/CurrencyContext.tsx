@@ -1,4 +1,4 @@
-import React from "react";
+import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 import { Currency } from "../data/currency";
 
 export interface CurrencyState {
@@ -7,7 +7,7 @@ export interface CurrencyState {
 }
 
 export function useCurrencyContext(): CurrencyState {
-  const currencyState = React.useContext(CurrencyContext);
+  const currencyState = useContext(CurrencyContext);
 
   if (currencyState === null) {
     throw "Did not find CurrencyContext, did you forget to add CurrencyContext.Provider to the tree";
@@ -16,4 +16,25 @@ export function useCurrencyContext(): CurrencyState {
   return currencyState;
 }
 
-export const CurrencyContext = React.createContext<CurrencyState | null>(null);
+export function CurrencyContextProvider({ children }: { children: ReactNode }) {
+  const [currency, updateCurrency] = useState<Currency>({
+    symbol: "$",
+    rate: 1,
+  });
+
+  const currencyState = useMemo<CurrencyState>(
+    () => ({
+      currency,
+      updateCurrency,
+    }),
+    [currency, updateCurrency]
+  );
+
+  return (
+    <CurrencyContext.Provider value={currencyState}>
+      {children}
+    </CurrencyContext.Provider>
+  );
+}
+
+export const CurrencyContext = createContext<CurrencyState | null>(null);

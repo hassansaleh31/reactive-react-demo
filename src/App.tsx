@@ -1,54 +1,29 @@
 import "./App.css";
-import { Cart } from "./components/Cart";
-import { ProductListTile } from "./components/ProductListTile";
-import { useProductList } from "./hooks/useProductList";
-import { useCartProducts } from "./hooks/useCartProducts";
-import { CartContext } from "./context/CartContext";
-import { Currency } from "./data/currency";
-import { CurrencyContext } from "./context/CurrencyContext";
+import { CartContextProvider } from "./context/CartContext";
+import { CurrencyContextProvider } from "./context/CurrencyContext";
 import { Header } from "./components/Header";
-import { useState } from "react";
+import { ProductList } from "./components/ProductList";
+import { Cart } from "./components/Cart";
 
 function App() {
-  const { products, loading } = useProductList();
-  const cartState = useCartProducts();
-  const [currency, updateCurrency] = useState<Currency>({
-    symbol: "$",
-    rate: 1,
-  });
-
   return (
-    <CurrencyContext.Provider value={{ currency, updateCurrency }}>
-      <CartContext.Provider value={cartState}>
-        <Header />
-        {
-          <div className="page-wrapper">
-            <div
-              style={{
-                flexGrow: "1",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              {loading
-                ? "Loading..."
-                : products.map((e) => {
-                    return <ProductListTile key={e.id} product={e} />;
-                  })}
-            </div>
-            <div
-              style={{
-                width: "320px",
-                marginLeft: "20px",
-                marginRight: "20px",
-              }}
-            >
-              <Cart />
-            </div>
+    <CurrencyContextProvider>
+      <Header />
+      <CartContextProvider>
+        <div className="page-wrapper">
+          <ProductList />
+          <div
+            style={{
+              width: "320px",
+              marginLeft: "20px",
+              marginRight: "20px",
+            }}
+          >
+            <Cart />
           </div>
-        }
-      </CartContext.Provider>
-    </CurrencyContext.Provider>
+        </div>
+      </CartContextProvider>
+    </CurrencyContextProvider>
   );
 }
 

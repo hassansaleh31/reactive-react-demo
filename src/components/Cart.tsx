@@ -13,25 +13,9 @@ export function Cart(): React.ReactElement {
 }
 
 function CartContent(): React.ReactElement {
-  const { cartProducts } = useCartContext();
+  const cartProducts = useCartContext();
 
-  const products = cartProducts.map((cartProduct) => cartProduct.product);
-
-  if (products.length === 0) return <span>Your cart is empty</span>;
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      {products.map((product) => {
-        return <CartProductItem key={product.id} {...product} />;
-      })}
-      <div style={{ borderBottom: "1px solid", marginTop: "10px" }}></div>
-      <CartTotal />
-    </div>
-  );
-}
-
-function CartTotal(): React.ReactElement {
-  const { cartProducts } = useCartContext();
+  if (cartProducts.length === 0) return <span>Your cart is empty</span>;
 
   const total = cartProducts.reduce(
     (acc, cartProduct) =>
@@ -39,6 +23,25 @@ function CartTotal(): React.ReactElement {
     0
   );
 
+  return (
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      {cartProducts.map(({ product }) => {
+        return (
+          <CartProductItem
+            key={product.id}
+            id={product.id}
+            name={product.name}
+            price={product.price}
+          />
+        );
+      })}
+      <div style={{ borderBottom: "1px solid", marginTop: "10px" }}></div>
+      <CartTotal total={total} />
+    </div>
+  );
+}
+
+function CartTotal({ total }: { total: number }): React.ReactElement {
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
       <span style={{ flexGrow: "1" }}>Total</span>

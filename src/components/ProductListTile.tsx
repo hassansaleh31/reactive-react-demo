@@ -1,7 +1,7 @@
 import React from "react";
 import "./ProductListTile.css";
 import { Product } from "../data/product";
-import { useCartContext } from "../context/CartContext";
+import { useCartApi, useCartContext } from "../context/CartContext";
 import { CurrencyPrice } from "./CurrencyPrice";
 
 interface ProductListTileProps {
@@ -29,7 +29,7 @@ export function ProductListTile({
 }
 
 function Actions({ product }: { product: Product }): React.ReactElement {
-  const { cartProducts, addProduct, removeProduct } = useCartContext();
+  const cartProducts = useCartContext();
 
   const quantity =
     cartProducts.find((cartProduct) => cartProduct.product.id === product.id)
@@ -37,14 +37,32 @@ function Actions({ product }: { product: Product }): React.ReactElement {
 
   return (
     <div>
-      <button
-        disabled={quantity === 0}
-        onClick={() => removeProduct(product.id)}
-      >
-        -
-      </button>
+      <RemoveButton disabled={quantity <= 0} id={product.id} />
       {` ${quantity} `}
-      <button onClick={() => addProduct(product)}>+</button>
+      <AddButton product={product} />
     </div>
   );
 }
+
+const RemoveButton = React.memo(function RemoveButton({
+  id,
+  disabled,
+}: {
+  id: number;
+  disabled: boolean;
+}): React.ReactElement {
+  const { removeProduct } = useCartApi();
+  return (
+    <button disabled={disabled} onClick={() => removeProduct(id)}>
+      -
+    </button>
+  );
+});
+
+const AddButton = React.memo(function AddButton({
+  product,
+}: Pick<ProductListTileProps, "product">): React.ReactElement {
+  const { addProduct } = useCartApi();
+
+  return <button onClick={() => addProduct(product)}>+</button>;
+});

@@ -1,5 +1,5 @@
 import React from "react";
-import { useCartContext } from "../context/CartContext";
+import { useCartApi, useCartContext } from "../context/CartContext";
 import { CurrencyPrice } from "./CurrencyPrice";
 
 export interface CartProductItemProps {
@@ -13,7 +13,7 @@ export const CartProductItem = React.memo(function CartProductItem({
   name,
   price,
 }: CartProductItemProps): React.ReactElement {
-  const { removeAll } = useCartContext();
+  const { removeAll } = useCartApi();
 
   return (
     <div
@@ -36,7 +36,7 @@ export const CartProductItem = React.memo(function CartProductItem({
 });
 
 function Quantity({ id }: { id: number }): React.ReactElement {
-  const { cartProducts } = useCartContext();
+  const cartProducts = useCartContext();
 
   const quantity =
     cartProducts.find((cartProduct) => cartProduct.product.id === id)
