@@ -6,16 +6,6 @@ export function useBehaviourSubject<TData>(
 ): [BehaviorSubject<TData>, (newValue: TData) => void] {
   const [subject$] = useState(() => new BehaviorSubject(initialValue));
 
-  // for cleanup
-  //   useEffect(() => {
-  //     return () => {
-  //       // close the current subject
-  //       if (!subject$.closed) {
-  //         subject$.complete();
-  //       }
-  //     };
-  //   }, [subject$]);
-
   const setValue = useCallback(
     (newValue: TData) => {
       if (!subject$.closed) {
