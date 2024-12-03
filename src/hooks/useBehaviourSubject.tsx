@@ -1,29 +1,36 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { BehaviorSubject } from "rxjs";
 
 export function useBehaviourSubject<TData>(
   initialValue: TData
 ): [BehaviorSubject<TData>, (newValue: TData) => void] {
-  const [subject$] = useState(() => new BehaviorSubject(initialValue));
+  const ref = useRef<BehaviorSubject<TData>>(new BehaviorSubject(initialValue));
 
   // for cleanup
-  //   useEffect(() => {
-  //     return () => {
-  //       // close the current subject
-  //       if (!subject$.closed) {
-  //         subject$.complete();
-  //       }
-  //     };
-  //   }, [subject$]);
+  useEffect(() => {
+    if (ref.current != null) {
+      // initial render
+      ref.current.complete();
+    }
 
-  const setValue = useCallback(
-    (newValue: TData) => {
-      if (!subject$.closed) {
-        subject$.next(newValue);
+    ref.current = new BehaviorSubject(ref.current?.value);
+    return () => {
+      // close the current subject
+      if (!ref.current.closed) {
+        ref.current.complete();
       }
-    },
-    [subject$]
-  );
+    };
+  }, []);
 
-  return [subject$, setValue];
+  const setValue = useCallback((newValue: TData) => {
+    const subject$ = ref.current;
+
+    if (!subject$ || subject$.closed) {
+      return;
+    }
+
+    subject$.next(newValue);
+  }, []);
+
+  return [ref.current, setValue];
 }
